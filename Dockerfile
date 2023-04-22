@@ -15,3 +15,5 @@ RUN echo "====== INSTALL PACKAGES ======" \
 
 COPY --from=builder /go/bin/drone-runner-docker /usr/bin/
 COPY override /
+
+EXPOSE 3000/tcp

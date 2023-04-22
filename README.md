@@ -55,6 +55,7 @@ You can perform some basic configuration of the container using the files and
 directories listed below.
 
 - ``/mnt/config/etc/crontabs/<user>``: User Crontabs. [*]
+- ``/mnt/config/etc/drone-runner-config``: Set Drone Envars. [*]
 - ``/mnt/config/etc/logrotate.conf``: Logrotate Global Configuration.
 - ``/mnt/config/etc/logrotate.d/``: Logrotate Additional Configuration.
 
