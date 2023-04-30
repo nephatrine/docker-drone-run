@@ -20,7 +20,7 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   buildarm64:
     if: gitea.repository_owner == 'NephNET' && !contains(github.event.head_commit.message, '#noci')
-    runs-on: rpi4
+    runs-on: nephnet-arm64
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -50,7 +50,7 @@ jobs:
   packagearm64:
     if: gitea.repository_owner == 'NephNET'
     needs: [buildarm64]
-    runs-on: rpi4
+    runs-on: nephnet-arm64
     steps:
       - name: Docker Login
         uses: actions/docker-login@v2
@@ -107,7 +107,7 @@ jobs:
   publisharm64:
     if: gitea.repository_owner == 'NephNET' && gitea.ref_name == 'master'
     needs: [buildarm64]
-    runs-on: rpi4
+    runs-on: nephnet-arm64
     steps:
       - name: Docker Login
         uses: actions/docker-login@v2
