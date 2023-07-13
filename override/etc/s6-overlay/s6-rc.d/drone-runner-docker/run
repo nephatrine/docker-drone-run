@@ -1,58 +1,59 @@
 #!/command/with-contenv /bin/bash
 
 export HOME=/mnt/config/home
-cd /mnt/config/home
-
-# Create Log Directory
-
-if [[ ! -d /mnt/config/log ]]; then
-  /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/log
-fi
-
-# Build Drone Configuration
-
-if [[ ! -d /mnt/config/etc ]]; then
-  /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/etc
-fi
-if [[ ! -f /mnt/config/etc/drone-runner-config ]]; then
-  /command/s6-setuidgid guardian /bin/touch /mnt/config/etc/drone-runner-config
-  echo "#export DRONE_RPC_SECRET=" >> /mnt/config/etc/drone-runner-config
-  echo "#export DRONE_RPC_PROTO=http" >> /mnt/config/etc/drone-runner-config
-  echo "#export DRONE_RPC_HOST=example.net" >> /mnt/config/etc/drone-runner-config
-  echo "#export DRONE_RUNNER_NAME=$(hostname)" >> /mnt/config/etc/drone-runner-config
-  echo "#export DRONE_RUNNER_CAPACITY=1" >> /mnt/config/etc/drone-runner-config
-fi
-
-# Start Runner
-
-. /mnt/config/etc/drone-runner-config
 export DRONE_LOG_FILE=${DRONE_LOG_FILE:-"/mnt/config/log/drone-docker-runner.log"}
 export DRONE_RPC_PROTO=${DRONE_RPC_PROTO:-"http"}
 export DRONE_RUNNER_NAME=${DRONE_RUNNER_NAME:-"$(hostname)"}
 export DRONE_RUNNER_CAPACITY=${DRONE_RUNNER_CAPACITY:-1}
 export DRONE_RUNNER_OS=${DRONE_RUNNER_OS:-"linux"}
 
-if [[ "$(uname -m)" == "aarch64" ]]; then
+if [[ "$(/bin/uname -m)" == "aarch64" ]]; then
   export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"arm64"}
-elif [[ "$(uname -m)" == "armv7l" ]]; then
+elif [[ "$(/bin/uname -m)" == "armv7l" ]]; then
   export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"arm"}
-elif [[ "$(uname -m)" == "x86_64" ]]; then
+elif [[ "$(/bin/uname -m)" == "x86_64" ]]; then
   export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"amd64"}
 else
   export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"$(uname -m)"}
 fi
 
-# Fix Log Perms
+cd /mnt/config/home || exit 1
 
+# Build Drone Configuration
+
+if [[ ! -d /mnt/config/etc ]]; then
+  /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/etc
+fi
+if [[ ! -d /mnt/config/etc && ! -f /mnt/config/etc/drone-runner-config ]]; then
+  /bin/echo "#!/bin/sh" | /command/s6-setuidgid guardian /usr/bin/tee /mnt/config/etc/drone-runner-config
+  /bin/echo "#export DRONE_RPC_SECRET=" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/etc/drone-runner-config
+  /bin/echo "#export DRONE_RPC_PROTO=http" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/etc/drone-runner-config
+  /bin/echo "#export DRONE_RPC_HOST=example.net" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/etc/drone-runner-config
+  /bin/echo "#export DRONE_RUNNER_NAME=$(hostname)" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/etc/drone-runner-config
+  /bin/echo "#export DRONE_RUNNER_CAPACITY=1" | /command/s6-setuidgid guardian /usr/bin/tee -a /mnt/config/etc/drone-runner-config
+  /command/s6-setuidgid guardian /bin/chmod +x /mnt/config/etc/drone-runner-config
+fi
+if [[ -f /mnt/config/etc/drone-runner-config ]]; then
+  . /mnt/config/etc/drone-runner-config
+fi
+
+# Create Log
+
+if [[ ! -d /mnt/config/log ]]; then
+  /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/log
+fi
 if [[ ! -f "${DRONE_LOG_FILE}" ]]; then
   /command/s6-setuidgid guardian /bin/touch "${DRONE_LOG_FILE}"
 else
   /bin/chown guardian:users "${DRONE_LOG_FILE}"
 fi
 
-if [[ ! -z "${DRONE_RPC_SECRET}" && ! -z "${DRONE_RPC_HOST}" ]]; then
+# Start Daemon
+
+if [[ -n "${DRONE_RPC_SECRET}" && -n "${DRONE_RPC_HOST}" ]]; then
   exec /usr/bin/drone-runner-docker
 else
-  sleep 300
+  /bin/echo "** no SECRET or HOST given **"
+  /bin/sleep 300
   exit 0
 fi
