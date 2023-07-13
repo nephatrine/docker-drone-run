@@ -1,0 +1,15 @@
+services:
+  drone_runner:
+    build: .
+    container_name: drone_runner
+    environment:
+      TZ: America/New_York
+      PUID: 1000
+      PGID: 1000
+      DRONE_RPC_HOST: example.net:8080
+      DRONE_RPC_PROTO: http
+      DRONE_RPC_SECRET:
+      DRONE_RUNNER_NAME: testrunner
+    volumes:
+      - /mnt/containers/drone_runner:/mnt/config
+      - /var/run/docker.sock:/run/docker.sock
