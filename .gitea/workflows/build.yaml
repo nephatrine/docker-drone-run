@@ -55,7 +55,7 @@ jobs:
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure() || gitea.event_name != 'schedule'
         with:
-          title: "Container Build (X86_64; 1.8.3)"
+          title: "Container Build (X86_64; 1.8.4)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   push_amd64:
     needs: [build_amd64]
@@ -131,7 +131,7 @@ jobs:
         uses: https://github.com/sarisia/actions-status-discord@v1
         if: failure()
         with:
-          title: "Container Build (I686; 1.8.3)"
+          title: "Container Build (I686; 1.8.4)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   push_i386:
     needs: [build_i386]
@@ -207,7 +207,7 @@ jobs:
         uses: https://github.com/sarisia/actions-status-discord@v1
         if: failure()
         with:
-          title: "Container Build (AARCH64; 1.8.3)"
+          title: "Container Build (AARCH64; 1.8.4)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   push_arm64:
     needs: [build_arm64]
@@ -283,7 +283,7 @@ jobs:
         uses: https://github.com/sarisia/actions-status-discord@v1
         if: failure()
         with:
-          title: "Container Build (ARMV7L; 1.8.3)"
+          title: "Container Build (ARMV7L; 1.8.4)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_BUILD }}
   push_armhf:
     needs: [build_armhf]
@@ -344,7 +344,7 @@ jobs:
         id: manifest
         run: |
           export IMAGELIST="--amend code.nephatrine.net/nephhub/amd64:drone-runner --amend code.nephatrine.net/nephhub/ia32:drone-runner --amend code.nephatrine.net/nephhub/arm64:drone-runner --amend code.nephatrine.net/nephhub/arm32:drone-runner"
-          for manifestName in 1.8.3 1.8 1 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-runner:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-runner:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-runner:${manifestName}; done
+          for manifestName in 1.8.4 1.8 1 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-runner:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-runner:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-runner:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
         run: sleep 60
@@ -352,13 +352,13 @@ jobs:
         if: steps.manifest.outcome != 'success'
         run: |
           export IMAGELIST="--amend code.nephatrine.net/nephhub/amd64:drone-runner --amend code.nephatrine.net/nephhub/ia32:drone-runner --amend code.nephatrine.net/nephhub/arm64:drone-runner --amend code.nephatrine.net/nephhub/arm32:drone-runner"
-          for manifestName in 1.8.3 1.8 1 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-runner:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-runner:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-runner:${manifestName}; done
+          for manifestName in 1.8.4 1.8 1 latest; do docker manifest rm code.nephatrine.net/nephnet/drone-runner:${manifestName} || true; docker manifest create code.nephatrine.net/nephnet/drone-runner:${manifestName} ${IMAGELIST}; docker manifest push --purge code.nephatrine.net/nephnet/drone-runner:${manifestName}; done
       - name: Notify Discord
         continue-on-error: true
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure() || gitea.event_name != 'schedule'
         with:
-          title: "Container Publish (1.8.3)"
+          title: "Container Publish (1.8.4)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
   push:
     needs: [push_amd64, push_i386, push_arm64, push_armhf]
@@ -386,7 +386,7 @@ jobs:
         id: manifest
         run: |
           export IMAGELIST="--amend nephatrine/amd64:drone-runner --amend nephatrine/ia32:drone-runner --amend nephatrine/arm64:drone-runner --amend nephatrine/armv7:drone-runner"
-          for manifestName in 1.8.3 1.8 1 latest; do docker manifest rm nephatrine/drone-runner:${manifestName} || true; docker manifest create nephatrine/drone-runner:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-runner:${manifestName}; done
+          for manifestName in 1.8.4 1.8 1 latest; do docker manifest rm nephatrine/drone-runner:${manifestName} || true; docker manifest create nephatrine/drone-runner:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-runner:${manifestName}; done
       - name: Wait to Retry
         if: steps.manifest.outcome != 'success'
         run: sleep 60
@@ -394,12 +394,12 @@ jobs:
         if: steps.manifest.outcome != 'success'
         run: |
           export IMAGELIST="--amend nephatrine/amd64:drone-runner --amend nephatrine/ia32:drone-runner --amend nephatrine/arm64:drone-runner --amend nephatrine/armv7:drone-runner"
-          for manifestName in 1.8.3 1.8 1 latest; do docker manifest rm nephatrine/drone-runner:${manifestName} || true; docker manifest create nephatrine/drone-runner:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-runner:${manifestName}; done
+          for manifestName in 1.8.4 1.8 1 latest; do docker manifest rm nephatrine/drone-runner:${manifestName} || true; docker manifest create nephatrine/drone-runner:${manifestName} ${IMAGELIST}; docker manifest push --purge nephatrine/drone-runner:${manifestName}; done
       - name: Notify Discord
         uses: https://code.nephatrine.net/NephHub/actions-status-discord@v1
         if: failure()
         with:
-          title: "DockerHub Publish (1.8.3)"
+          title: "DockerHub Publish (1.8.4)"
           webhook: ${{ secrets.DISCORD_WEBHOOK_PACKAGE }}
   update_readme:
     needs: [push]

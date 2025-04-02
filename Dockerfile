@@ -4,7 +4,7 @@
 
 FROM code.nephatrine.net/nephnet/nxb-alpine:golang AS builder
 
-ARG DRONE_DOCKER_VERSION=v1.8.3
+ARG DRONE_DOCKER_VERSION=v1.8.4
 
 RUN git -C /root clone -b "$DRONE_DOCKER_VERSION" --single-branch --depth=1 https://github.com/drone-runners/drone-runner-docker
 
