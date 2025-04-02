@@ -1,4 +1,7 @@
 #!/command/with-contenv /bin/bash
+# SPDX-FileCopyrightText: 2023 Daniel Wolf <nephatrine@gmail.com>
+#
+# SPDX-License-Identifier: ISC
 
 export HOME=/mnt/config/home
 export DRONE_LOG_FILE=${DRONE_LOG_FILE:-"/mnt/config/log/drone-docker-runner.log"}

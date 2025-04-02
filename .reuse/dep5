@@ -1,0 +1,16 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: docker-drone-runner
+Upstream-Contact: Daniel Wolf <nephatrine@gmail.com>
+Source: https://code.nephatrine.net/NephNET/docker-drone-runner
+
+Files: override/etc/s6-overlay/s6-rc.d/drone-runner-docker/dependencies.d/*
+Copyright: 2023 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/etc/s6-overlay/s6-rc.d/drone-runner-docker/type
+Copyright: 2023 Daniel Wolf <nephatrine@gmail.com>
+License: ISC
+
+Files: override/etc/s6-overlay/s6-rc.d/user/contents.d/*
+Copyright: 2023 Daniel Wolf <nephatrine@gmail.com>
+License: ISC

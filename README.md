@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2023 - 2025 Daniel Wolf <nephatrine@gmail.com>
+
+SPDX-License-Identifier: ISC
+-->
+
 [Git](https://code.nephatrine.net/NephNET/docker-drone-run/src/branch/master) |
 [Docker](https://hub.docker.com/r/nephatrine/drone-runner/) |
 [unRAID](https://code.nephatrine.net/NephNET/unraid-containers)
