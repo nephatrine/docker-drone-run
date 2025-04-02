@@ -10,6 +10,8 @@ SPDX-License-Identifier: ISC
 
 # Drone CI/CD Runner
 
+## WARNING: I do not actively use this software anymore and so it is not thoroughly tested. I do suggest you find an alternative.
+
 This docker image contains the drone-docker-runner for hosting your own CI/CD
 build environments.
 
