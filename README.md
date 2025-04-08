@@ -28,7 +28,7 @@ This is an example docker-compose file:
 ```yaml
 services:
   drone_runner:
-    image: nephatrine/gitea-runner:latest
+    image: nephatrine/drone-runner:latest
     container_name: drone_runner
     environment:
       TZ: America/New_York
