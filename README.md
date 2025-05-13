@@ -35,6 +35,15 @@ not maintain this indefinitely.**
 
 ## Configuration
 
+This is the only configuration file you will likely need to be aware of and
+potentially customize.
+
+- `/mnt/config/etc/drone-runner-config`
+
+This is a bash script that will be sourced by the startup routine to include
+additional tweaks or setup you would like to perform. Modifications to these
+files will require a service restart to pull in the changes made.
+
 ### Container Variables
 
 - `TZ`: Time Zone (i.e. `America/New_York`)
@@ -46,15 +55,6 @@ not maintain this indefinitely.**
 - `DRONE_RUNNER_NAME`: Runner Name
 
 ## Testing
-
-This is the only configuration file you will likely need to be aware of and
-potentially customize.
-
-- `/mnt/config/etc/drone-runner-config`
-
-This is a bash script that will be sourced by the startup routine to include
-additional tweaks or setup you would like to perform. Modifications to these
-files will require a service restart to pull in the changes made.
 
 ### docker-compose
 
