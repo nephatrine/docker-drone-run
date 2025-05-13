@@ -1,19 +1,18 @@
-# SPDX-FileCopyrightText: 2023 - 2025 Daniel Wolf <nephatrine@gmail.com>
-#
-# SPDX-License-Identifier: ISC
+# SPDX-FileCopyrightText: 2023-2025 Daniel Wolf <nephatrine@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
 
 services:
-  drone_runner:
+  drone-runner:
     build: .
-    container_name: drone_runner
+    container_name: drone-runner
     environment:
       TZ: America/New_York
       PUID: 1000
       PGID: 1000
-      DRONE_RPC_HOST: example.net:8080
-      DRONE_RPC_PROTO: http
+      DRONE_RPC_HOST: drone.example.net
+      DRONE_RPC_PROTO: https
       DRONE_RPC_SECRET:
-      DRONE_RUNNER_NAME: testrunner
+      DRONE_RUNNER_NAME: test
     volumes:
-      - /mnt/containers/drone_runner:/mnt/config
+      - /mnt/containers/drone-runner:/mnt/config
       - /var/run/docker.sock:/run/docker.sock

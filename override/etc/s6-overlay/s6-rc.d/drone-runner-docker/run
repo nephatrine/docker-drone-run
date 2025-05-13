@@ -1,7 +1,9 @@
 #!/command/with-contenv /bin/bash
-# SPDX-FileCopyrightText: 2023 Daniel Wolf <nephatrine@gmail.com>
-#
+# SPDX-FileCopyrightText: 2023-2025 Daniel Wolf <nephatrine@gmail.com>
 # SPDX-License-Identifier: ISC
+
+# shellcheck shell=bash
+# shellcheck disable=SC1091
 
 export HOME=/mnt/config/home
 export DRONE_LOG_FILE=${DRONE_LOG_FILE:-"/mnt/config/log/drone-docker-runner.log"}
@@ -12,7 +14,7 @@ export DRONE_RUNNER_OS=${DRONE_RUNNER_OS:-"linux"}
 
 if [[ "$(/bin/uname -m)" == "aarch64" ]]; then
   export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"arm64"}
-elif [[ "$(/bin/uname -m)" == "armv7l" ]]; then
+elif [[ "$(/bin/uname -m)" == "armv7l" || "$(/bin/uname -m)" == "armv8l" ]]; then
   export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"arm"}
 elif [[ "$(/bin/uname -m)" == "x86_64" ]]; then
   export DRONE_RUNNER_ARCH=${DRONE_RUNNER_ARCH:-"amd64"}
@@ -21,8 +23,6 @@ else
 fi
 
 cd /mnt/config/home || exit 1
-
-# Build Drone Configuration
 
 if [[ ! -d /mnt/config/etc ]]; then
   /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/etc
@@ -40,8 +40,6 @@ if [[ -f /mnt/config/etc/drone-runner-config ]]; then
   . /mnt/config/etc/drone-runner-config
 fi
 
-# Create Log
-
 if [[ ! -d /mnt/config/log ]]; then
   /command/s6-setuidgid guardian /bin/mkdir -p /mnt/config/log
 fi
@@ -50,8 +48,6 @@ if [[ ! -f "${DRONE_LOG_FILE}" ]]; then
 else
   /bin/chown guardian:users "${DRONE_LOG_FILE}"
 fi
-
-# Start Daemon
 
 if [[ -n "${DRONE_RPC_SECRET}" && -n "${DRONE_RPC_HOST}" ]]; then
   exec /usr/bin/drone-runner-docker

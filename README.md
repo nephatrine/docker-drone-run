@@ -1,54 +1,83 @@
 <!--
-SPDX-FileCopyrightText: 2023 - 2025 Daniel Wolf <nephatrine@gmail.com>
-
+SPDX-FileCopyrightText: 2023-2025 Daniel Wolf <nephatrine@gmail.com>
 SPDX-License-Identifier: ISC
 -->
 
-[Git](https://code.nephatrine.net/NephNET/docker-drone-run/src/branch/master) |
-[Docker](https://hub.docker.com/r/nephatrine/drone-runner/) |
-[unRAID](https://code.nephatrine.net/NephNET/unraid-containers)
+# Drone Docker Runner
 
-# Drone CI/CD Runner
+[![NephCode](https://img.shields.io/static/v1?label=Git&message=NephCode&color=teal)](https://code.nephatrine.net/NephNET/docker-drone-run)
+[![GitHub](https://img.shields.io/static/v1?label=Git&message=GitHub&color=teal)](https://github.com/nephatrine/docker-drone-run)
+[![Registry](https://img.shields.io/static/v1?label=OCI&message=NephCode&color=blue)](https://code.nephatrine.net/NephNET/-/packages/container/drone-runner/latest)
+[![DockerHub](https://img.shields.io/static/v1?label=OCI&message=DockerHub&color=blue)](https://hub.docker.com/repository/docker/nephatrine/drone-runner/general)
+[![unRAID](https://img.shields.io/static/v1?label=unRAID&message=template&color=orange)](https://code.nephatrine.net/NephNET/unraid-containers)
 
-## WARNING: I do not actively use this software anymore and so it is not thoroughly tested. I do suggest you find an alternative.
+This is an Alpine-based container hosting a Drone CI runner for performing your
+own CI/CD builds in Docker containers. You can have multiple such runners
+connected to a Drone server.
 
-This docker image contains the drone-docker-runner for hosting your own CI/CD
-build environments.
+**WARNING: Please note that the runner itself runs as the root user inside the
+container. Only allow trusted users and organizations access to your runner.**
 
-The `latest` tag points to version `1.8.4` and this is the only image actively
-being updated. There are tags for older versions, but these may no longer be
-using the latest Alpine version and packages.
+**WARNING: I have personally migrated to Gitea Actions and so this container is
+not thoroughly tested anymore. I do suggest you find an alternative as I will
+not maintain this indefinitely.**
 
-**Please note that the runner itself runs as the root user inside the container.**
+## Supported Tags
 
-## Docker-Compose
+- `drone-runner:1.8.4`: Drone Docker Runner 1.8.4
 
-This is an example docker-compose file:
+## Software
 
-```yaml
-services:
-  drone_runner:
-    image: nephatrine/drone-runner:latest
-    container_name: drone_runner
-    environment:
-      TZ: America/New_York
-      PUID: 1000
-      PGID: 1000
-      DRONE_RPC_HOST: example.net:8080
-      DRONE_RPC_PROTO: http
-      DRONE_RPC_SECRET:
-      DRONE_RUNNER_NAME: testrunner
-    volumes:
-      - /mnt/containers/drone_runner:/mnt/config
-      - /var/run/docker.sock:/run/docker.sock
-```
+- [Alpine Linux](https://alpinelinux.org/)
+- [Skarnet S6](https://skarnet.org/software/s6/)
+- [s6-overlay](https://github.com/just-containers/s6-overlay)
+- [Drone Docker Runner](https://docs.drone.io/runner/docker/overview/)
 
-## Server Configuration
+## Configuration
+
+### Container Variables
+
+- `TZ`: Time Zone (i.e. `America/New_York`)
+- `PUID`: Mounted File Owner User ID
+- `PGID`: Mounted File Owner Group ID
+- `DRONE_RPC_HOST`: Drone Domain/IP and Port
+- `DRONE_RPC_PROTO`: Drone URL Protocol
+- `DRONE_RPC_SECRET`: Drone Secret
+- `DRONE_RUNNER_NAME`: Runner Name
+
+## Testing
 
 This is the only configuration file you will likely need to be aware of and
 potentially customize.
 
 - `/mnt/config/etc/drone-runner-config`
 
-Modifications to this file will require a service restart to pull in the
-changes made.
+This is a bash script that will be sourced by the startup routine to include
+additional tweaks or setup you would like to perform. Modifications to these
+files will require a service restart to pull in the changes made.
+
+### docker-compose
+
+```yaml
+services:
+  drone-runner:
+    image: nephatrine/drone-runner:latest
+    container_name: drone-runner
+    environment:
+      TZ: America/New_York
+      PUID: 1000
+      PGID: 1000
+      DRONE_RPC_HOST: drone.example.net
+      DRONE_RPC_PROTO: https
+      DRONE_RPC_SECRET:
+      DRONE_RUNNER_NAME: test
+    volumes:
+      - /mnt/containers/drone-runner:/mnt/config
+      - /var/run/docker.sock:/run/docker.sock
+```
+
+### docker run
+
+```bash
+docker run --rm -ti code.nephatrine.net/nephnet/drone-runner:latest /bin/bash
+```
